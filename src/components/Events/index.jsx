@@ -4,7 +4,7 @@ import eventsJSON from '../../data/events.json';
 
 
 
-const Events = () => {
+const Events = ({searchTerm}) => {
 
     const[data] = useState(eventsJSON);
     const { _embedded : {events}} = data;
@@ -14,10 +14,16 @@ const Events = () => {
     };
 
 
-    return(
-        <div>
-            Eventos
-            {events.map((evenItem) => (
+    const renderEvents = () =>{
+
+        let eventsFiltered = events;
+
+        if (searchTerm.length > 0){
+          eventsFiltered = eventsFiltered.filter((item) => 
+            item.name.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()));  
+        }
+
+        return eventsFiltered.map((evenItem) => (
             <EvenItem  
                 key={`event-item-${evenItem.id}`} 
                 name = {evenItem.name}
@@ -26,7 +32,13 @@ const Events = () => {
                 onEventClick={handleEventItemClick}
                 id = {evenItem.id}
                 />
-        ))}
+        ));
+    };
+
+    return(
+        <div>
+            Eventos
+            {renderEvents()}
         </div>
     );
 };
